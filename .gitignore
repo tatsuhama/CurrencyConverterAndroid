@@ -1,0 +1,37 @@
+local.properties
+
+.DS_Store
+=======
+# Built application files
+*.apk
+*.ap_
+
+# Files for the Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+.classpath
+.project
+
+# Gradle files
+.gradle
+build/
+buildSrc/
+
+*.ipr
+*.iws
+
+!.idea/runConfigurations/*
+.idea/*.xml
+.idea/.name
+.idea/copyright/
+.idea/libraries/
+.idea/scopes/
+.idea/inspectionProfiles/
+
+*.iml
