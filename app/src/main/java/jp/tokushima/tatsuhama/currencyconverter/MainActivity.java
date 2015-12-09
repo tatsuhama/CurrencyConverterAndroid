@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.stetho.okhttp.StethoInterceptor;
+import com.squareup.okhttp.OkHttpClient;
+
 import java.util.HashMap;
 
 import butterknife.Bind;
@@ -16,6 +19,7 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.OkClient;
 import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,8 +45,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getCurrency() {
+        OkHttpClient client = new OkHttpClient();
+        client.networkInterceptors().add(new StethoInterceptor());
         final KawaseApi kawaseApi = new RestAdapter.Builder()
                 .setEndpoint("http://api.aoikujira.com/kawase")
+                .setClient(new OkClient(client))
                 .build()
                 .create(KawaseApi.class);
         kawaseApi.getCurrency("json", mFromCode, new Callback<HashMap<String, String>>() {
