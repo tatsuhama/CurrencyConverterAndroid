@@ -20,6 +20,11 @@ android {
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
+    repositories {
+        maven {
+            url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
+        }
+    }
 }
 
 dependencies {
@@ -32,4 +37,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
     compile 'io.realm:realm-android:0.85.1'
+    compile 'com.uphyca:stetho_realm:0.7.2'
 }
