@@ -16,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_FROM = 123;
     private static final int REQUEST_CODE_TO = 1234;
+    private Code mFromCode = Code.USD;
+    private Code mToCode = Code.JPY;
     @Bind(R.id.from_edit)
     EditText mFromEdit;
     @Bind(R.id.from_unit)
@@ -52,9 +54,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && data != null) {
-            String value = data.getStringExtra("value");
-            String message = "requestCode = " + requestCode + ", value = " + value;
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            Code selectedCode = Code.valueOf(data.getStringExtra("value"));
+            if (requestCode == REQUEST_CODE_FROM) {
+                setFromCode(selectedCode);
+            } else if (requestCode == REQUEST_CODE_TO) {
+                setToCode(selectedCode);
+            }
         }
+    }
+
+    private void setFromCode(Code code) {
+        mFromCode = code;
+        mFromButton.setText(code.getUnit());
+    }
+
+    private void setToCode(Code code) {
+        mToCode = code;
+        mToButton.setText(code.getUnit());
     }
 }
