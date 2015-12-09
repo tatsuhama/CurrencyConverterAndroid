@@ -6,9 +6,8 @@
     android:orientation="vertical"
     tools:context="jp.tokushima.tatsuhama.currencyconverter.CodeChooserActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CodeChooserActivity" />
-
+    <ListView
+        android:id="@+id/code_chooser_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
