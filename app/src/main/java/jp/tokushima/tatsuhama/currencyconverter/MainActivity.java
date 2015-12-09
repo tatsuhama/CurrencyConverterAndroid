@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 .setClient(new OkClient(client))
                 .build()
                 .create(KawaseApi.class);
-        kawaseApi.getCurrency("json", mFromCode, new Callback<HashMap<String, String>>() {
+        kawaseApi.getCurrency("json", mFromCode, mToCode, new Callback<HashMap<String, String>>() {
             @Override
             public void success(HashMap<String, String> map, Response response) {
                 String value = map.get(mToCode.name());
