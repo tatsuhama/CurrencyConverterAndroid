@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.OkHttpClient;
@@ -83,10 +82,6 @@ public class MainActivity extends AppCompatActivity {
         result.setToCode(mToCode.name());
         result.setFactor(factor);
         realm.commitTransaction();
-        // 確認
-        RealmQuery<ApiResult> query = realm.where(ApiResult.class);
-        RealmResults<ApiResult> results = query.findAll();
-        Toast.makeText(this, "results.size = " + results.size(), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -114,7 +109,21 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_calc)
     void onClickCalc() {
-        getCurrency();
+        Realm realm = Realm.getInstance(this);
+        RealmQuery<ApiResult> query = realm.where(ApiResult.class);
+        long now = System.currentTimeMillis();
+        long tenMinutesBefore = now - 10 * 1000 * 60; // 10分前
+        RealmResults<ApiResult> results = query
+                .equalTo("fromCode", mFromCode.name())
+                .equalTo("toCode", mToCode.name())
+                .greaterThan("requestTime", tenMinutesBefore)
+                .findAll();
+        if (results.isEmpty()) {
+            getCurrency();
+        } else {
+            double factor = results.first().getFactor();
+            calc(factor);
+        }
     }
 
     @Override
