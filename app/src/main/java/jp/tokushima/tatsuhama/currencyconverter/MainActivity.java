@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.squareup.okhttp.OkHttpClient;
@@ -16,6 +17,9 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -57,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
             public void success(HashMap<String, String> map, Response response) {
                 String value = map.get(mToCode.name());
                 if (value != null) {
-                    calc(Double.parseDouble(value));
+                    double factor = Double.parseDouble(value);
+                    storeRealm(factor);
+                    calc(factor);
                 }
             }
 
@@ -66,6 +72,21 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("", "");
             }
         });
+    }
+
+    private void storeRealm(double factor) {
+        Realm realm = Realm.getInstance(MainActivity.this);
+        realm.beginTransaction();
+        ApiResult result = realm.createObject(ApiResult.class);
+        result.setRequestTime(System.currentTimeMillis());
+        result.setFromCode(mFromCode.name());
+        result.setToCode(mToCode.name());
+        result.setFactor(factor);
+        realm.commitTransaction();
+        // 確認
+        RealmQuery<ApiResult> query = realm.where(ApiResult.class);
+        RealmResults<ApiResult> results = query.findAll();
+        Toast.makeText(this, "results.size = " + results.size(), Toast.LENGTH_SHORT).show();
     }
 
     /**
