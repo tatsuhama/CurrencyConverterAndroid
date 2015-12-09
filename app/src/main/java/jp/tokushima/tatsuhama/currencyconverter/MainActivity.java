@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -49,7 +48,10 @@ public class MainActivity extends AppCompatActivity {
         kawaseApi.getCurrency("json", mFromCode, new Callback<HashMap<String, String>>() {
             @Override
             public void success(HashMap<String, String> map, Response response) {
-                Log.d("","");
+                String value = map.get(mToCode.name());
+                if (value != null) {
+                    calc(Double.parseDouble(value));
+                }
             }
 
             @Override
@@ -57,6 +59,17 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("", "");
             }
         });
+    }
+
+    /**
+     * @param factor 係数
+     */
+    private void calc(double factor) {
+        String fromValue = mFromEdit.getText().toString();
+        if (!fromValue.isEmpty()) {
+            double fromDValue = Double.parseDouble(fromValue);
+            mToText.setText(Double.toString(fromDValue * factor));
+        }
     }
 
     @OnClick(R.id.from_unit)
