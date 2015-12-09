@@ -3,14 +3,21 @@ package jp.tokushima.tatsuhama.currencyconverter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +41,24 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
+    private void getCurrency() {
+        final KawaseApi kawaseApi = new RestAdapter.Builder()
+                .setEndpoint("http://api.aoikujira.com/kawase")
+                .build()
+                .create(KawaseApi.class);
+        kawaseApi.getCurrency("json", mFromCode, new Callback<HashMap<String, String>>() {
+            @Override
+            public void success(HashMap<String, String> map, Response response) {
+                Log.d("","");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("", "");
+            }
+        });
+    }
+
     @OnClick(R.id.from_unit)
     void onClickFromUnitButton() {
         Intent intent = new Intent(this, CodeChooserActivity.class);
@@ -48,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.button_calc)
     void onClickCalc() {
-        Toast.makeText(this, "onClickCalc", Toast.LENGTH_SHORT).show();
+        getCurrency();
     }
 
     @Override
