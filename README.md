@@ -14,6 +14,7 @@
 * ButterKnife : <http://jakewharton.github.io/butterknife/>
 * Retrofit : <http://square.github.io/retrofit/>
  * OkHttp : <http://square.github.io/okhttp/>
+ * RxAndroid : <https://github.com/ReactiveX/RxAndroid>
 * Realm : <https://realm.io/jp/>
 * Stetho : <http://facebook.github.io/stetho/>
  * Stetho-OkHttp : <https://github.com/facebook/stetho/tree/master/stetho-okhttp>
