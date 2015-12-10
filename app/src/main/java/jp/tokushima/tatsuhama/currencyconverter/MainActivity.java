@@ -3,7 +3,6 @@ package jp.tokushima.tatsuhama.currencyconverter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,11 +18,13 @@ import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
-import retrofit.Callback;
 import retrofit.RestAdapter;
-import retrofit.RetrofitError;
 import retrofit.client.OkClient;
-import retrofit.client.Response;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,22 +56,41 @@ public class MainActivity extends AppCompatActivity {
                 .setClient(new OkClient(client))
                 .build()
                 .create(KawaseApi.class);
-        kawaseApi.getCurrency("json", mFromCode, mToCode, new Callback<HashMap<String, String>>() {
-            @Override
-            public void success(HashMap<String, String> map, Response response) {
-                String value = map.get(mToCode.name());
-                if (value != null) {
-                    double factor = Double.parseDouble(value);
-                    storeRealm(factor);
-                    calc(factor);
-                }
-            }
+        Observable<HashMap<String, String>> observable = kawaseApi.getCurrency("json", mFromCode, mToCode);
+        observable
+                .subscribeOn(Schedulers.newThread())
+                // 以下、バックグラウンドスレッドで実行
+                .map(new Func1<HashMap<String, String>, Double>() {
+                    // HashMap<String, String> → Double の変換
+                    @Override
+                    public Double call(HashMap<String, String> map) {
+                        String value = map.get(mToCode.name());
+                        if (value != null) {
+                            double dValue = Double.parseDouble(value);
+                            storeRealm(dValue);
+                            return dValue;
+                        }
+                        return null;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                // 以下、メインスレッドで実行
+                .subscribe(new Observer<Double>() {
+                    @Override
+                    public void onCompleted() {
 
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("", "");
-            }
-        });
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Double aDouble) {
+                        calc(aDouble);
+                    }
+                });
     }
 
     private void storeRealm(double factor) {
