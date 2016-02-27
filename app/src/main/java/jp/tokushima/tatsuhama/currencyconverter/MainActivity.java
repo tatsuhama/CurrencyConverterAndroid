@@ -15,6 +15,8 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import icepick.Icepick;
+import icepick.State;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -29,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_FROM = 123;
     private static final int REQUEST_CODE_TO = 1234;
-    private static final String KEY_FROM_CODE = "fromCode";
-    private static final String KEY_TO_CODE = "toCode";
-    private Code mFromCode = Code.USD;
-    private Code mToCode = Code.JPY;
+    @State
+    Code mFromCode = Code.USD;
+    @State
+    Code mToCode = Code.JPY;
     @Bind(R.id.from_edit)
     EditText mFromEdit;
     @Bind(R.id.from_unit)
@@ -47,21 +49,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        Icepick.restoreInstanceState(this, savedInstanceState);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(KEY_FROM_CODE, mFromCode);
-        outState.putSerializable(KEY_TO_CODE, mToCode);
+        Icepick.saveInstanceState(this, outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mFromCode = (Code) savedInstanceState.getSerializable(KEY_FROM_CODE);
         setFromCode(mFromCode);
-        mToCode = (Code) savedInstanceState.getSerializable(KEY_TO_CODE);
         setToCode(mToCode);
     }
 
