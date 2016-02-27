@@ -26,6 +26,7 @@ android {
         maven {
             url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
         }
+        maven { url "https://clojars.org/repo/" }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -45,4 +46,6 @@ dependencies {
     compile 'io.realm:realm-android:0.85.1'
     compile 'com.uphyca:stetho_realm:0.7.2'
     compile 'io.reactivex:rxandroid:0.24.0'
+    compile 'frankiesardo:icepick:3.2.0'
+    provided 'frankiesardo:icepick-processor:3.2.0'
 }

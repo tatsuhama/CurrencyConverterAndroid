@@ -15,6 +15,8 @@ import java.util.HashMap;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import icepick.Icepick;
+import icepick.State;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -29,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_FROM = 123;
     private static final int REQUEST_CODE_TO = 1234;
-    private Code mFromCode = Code.USD;
-    private Code mToCode = Code.JPY;
+    @State
+    Code mFromCode = Code.USD;
+    @State
+    Code mToCode = Code.JPY;
     @Bind(R.id.from_edit)
     EditText mFromEdit;
     @Bind(R.id.from_unit)
@@ -45,6 +49,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        Icepick.restoreInstanceState(this, savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        setFromCode(mFromCode);
+        setToCode(mToCode);
     }
 
     private void getCurrency() {
@@ -58,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         Observable<HashMap<String, String>> observable = kawaseApi.getCurrency("json", mFromCode, mToCode);
         observable
                 .subscribeOn(Schedulers.newThread())
-                // 以下、バックグラウンドスレッドで実行
+                        // 以下、バックグラウンドスレッドで実行
                 .map(map -> {
                     String value = map.get(mToCode.name());
                     if (value != null) {
@@ -69,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     return null;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                // 以下、メインスレッドで実行
+                        // 以下、メインスレッドで実行
                 .subscribe(new Observer<Double>() {
                     @Override
                     public void onCompleted() {

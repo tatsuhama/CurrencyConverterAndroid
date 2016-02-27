@@ -20,4 +20,4 @@
  * Stetho-OkHttp : <https://github.com/facebook/stetho/tree/master/stetho-okhttp>
  * Stetho-Realm : <https://github.com/uPhyca/stetho-realm>
 * Retrolambda : <https://github.com/orfjackal/retrolambda>
- 
+* Icepick : <https://github.com/frankiesardo/icepick> 
