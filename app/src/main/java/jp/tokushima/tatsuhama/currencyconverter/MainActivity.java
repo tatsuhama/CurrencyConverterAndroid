@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_FROM = 123;
     private static final int REQUEST_CODE_TO = 1234;
+    private static final String KEY_FROM_CODE = "fromCode";
+    private static final String KEY_TO_CODE = "toCode";
     private Code mFromCode = Code.USD;
     private Code mToCode = Code.JPY;
     @Bind(R.id.from_edit)
@@ -47,6 +49,22 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_FROM_CODE, mFromCode);
+        outState.putSerializable(KEY_TO_CODE, mToCode);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mFromCode = (Code) savedInstanceState.getSerializable(KEY_FROM_CODE);
+        setFromCode(mFromCode);
+        mToCode = (Code) savedInstanceState.getSerializable(KEY_TO_CODE);
+        setToCode(mToCode);
+    }
+
     private void getCurrency() {
         OkHttpClient client = new OkHttpClient();
         client.networkInterceptors().add(new StethoInterceptor());
@@ -58,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         Observable<HashMap<String, String>> observable = kawaseApi.getCurrency("json", mFromCode, mToCode);
         observable
                 .subscribeOn(Schedulers.newThread())
-                // 以下、バックグラウンドスレッドで実行
+                        // 以下、バックグラウンドスレッドで実行
                 .map(map -> {
                     String value = map.get(mToCode.name());
                     if (value != null) {
@@ -69,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     return null;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                // 以下、メインスレッドで実行
+                        // 以下、メインスレッドで実行
                 .subscribe(new Observer<Double>() {
                     @Override
                     public void onCompleted() {
